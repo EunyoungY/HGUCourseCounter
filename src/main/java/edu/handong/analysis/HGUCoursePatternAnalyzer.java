@@ -2,61 +2,85 @@ package edu.handong.analysis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
 import edu.handong.analysis.datamodel.Course;
 import edu.handong.analysis.datamodel.Student;
-import edu.handong.analysise.utils.NotEnoughArgumentException;
-import edu.handong.analysise.utils.Utils;
+import edu.handong.analysis.utils.NotEnoughArgumentException;
+import edu.handong.analysis.utils.Utils;
 
 public class HGUCoursePatternAnalyzer {
 
-	private HashMap<String,Student> students;
-	
+	private HashMap<String, Student> students; // 21700432 instance:student(21700432)
+												// 21800432 instance:student(21800432)
+
 	/**
-	 * This method runs our analysis logic to save the number courses taken by each student per semester in a result file.
-	 * Run method must not be changed!!
+	 * This method runs our analysis logic to save the number courses taken by each
+	 * student per semester in a result file. Run method must not be changed!!
+	 * 
 	 * @param args
 	 */
 	public void run(String[] args) {
-		
+
 		try {
-			// when there are not enough arguments from CLI, it throws the NotEnoughArgmentException which must be defined by you.
-			if(args.length<2)
+			// when there are not enough arguments from CLI, it throws the
+			// NotEnoughArgmentException which must be defined by you.
+			if (args.length < 2)
 				throw new NotEnoughArgumentException();
 		} catch (NotEnoughArgumentException e) {
 			System.out.println(e.getMessage());
 			System.exit(0);
 		}
-		
+
 		String dataPath = args[0]; // csv file to be analyzed
 		String resultPath = args[1]; // the file path where the results are saved.
 		ArrayList<String> lines = Utils.getLines(dataPath, true);
-		
+//		for(String line: lines) {
+//			System.out.println(line);
+//		}
+
 		students = loadStudentCourseRecords(lines);
-		
-		// To sort HashMap entries by key values so that we can save the results by student ids in ascending order.
-		Map<String, Student> sortedStudents = new TreeMap<String,Student>(students); 
-		
+
+		// To sort HashMap entries by key values so that we can save the results by
+		// student ids in ascending order.
+		Map<String, Student> sortedStudents = new TreeMap<String, Student>(students);
+
 		// Generate result lines to be saved.
 		ArrayList<String> linesToBeSaved = countNumberOfCoursesTakenInEachSemester(sortedStudents);
-		
+
 		// Write a file (named like the value of resultPath) with linesTobeSaved.
 		Utils.writeAFile(linesToBeSaved, resultPath);
+
 	}
-	
+
 	/**
-	 * This method create HashMap<String,Student> from the data csv file. Key is a student id and the corresponding object is an instance of Student.
-	 * The Student instance have all the Course instances taken by the student.
+	 * This method create HashMap<String,Student> from the data csv file. Key is a
+	 * student id and the corresponding object is an instance of Student. The
+	 * Student instance have all the Course instances taken by the student.
+	 * 
 	 * @param lines
 	 * @return
 	 */
-	private HashMap<String,Student> loadStudentCourseRecords(ArrayList<String> lines) {
-		
+	private HashMap<String, Student> loadStudentCourseRecords(ArrayList<String> lines) {
+		students = new HashMap<String, Student>();
+		Student newStudent;
+		Course newCourse;
+		for (String line : lines) {
+			String studentId = line.split(",")[0].trim();
+			newCourse = new Course(line);
+			if (students.containsKey(studentId)) {
+				students.get(studentId).addCourse(newCourse);
+			} else {
+				newStudent = new Student(studentId);
+				students.put(studentId, newStudent);
+				newStudent.addCourse(newCourse);
+			}
+		}
 		// TODO: Implement this method
-		
-		return null; // do not forget to return a proper variable.
+
+		return students; // do not forget to return a proper variable.
 	}
 
 	/**
@@ -72,10 +96,21 @@ public class HGUCoursePatternAnalyzer {
 	 * @param sortedStudents
 	 * @return
 	 */
+
 	private ArrayList<String> countNumberOfCoursesTakenInEachSemester(Map<String, Student> sortedStudents) {
+		ArrayList<String> result = new ArrayList<String>();
+		String studentId, totalSemesters, semester, numCoursesTakenInTheSemester; 
 		
-		// TODO: Implement this method
-		
-		return null; // do not forget to return a proper variable.
+		for(String key: sortedStudents.keySet()) {
+			studentId = String.format("%04d", Integer.parseInt(key)); //string 
+			totalSemesters = Integer.toString(sortedStudents.get(key).getSemestersByYearAndSemester().size());
+			for(int i=1; i<=Integer.parseInt(totalSemesters); i++) {
+				numCoursesTakenInTheSemester = String.valueOf(sortedStudents.get(key).getNumCourseInNthSemester(i)); 
+				System.out.println(studentId+","+totalSemesters+","+i+","+numCoursesTakenInTheSemester);
+				result.add(studentId+","+totalSemesters+","+i+","+numCoursesTakenInTheSemester);
+			}
+		}
+				// TODO: Implement this method
+		return result; // do not forget to return a proper variable.
 	}
 }
