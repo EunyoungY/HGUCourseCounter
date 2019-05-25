@@ -59,16 +59,5 @@ public class Student {
 			
 		}  
 		return numOfCourses;  
-	} 
-	
-//	public String getTotalSemester() {
-//		String res = String.valueOf(this.value);
-//		return res;
-//	} 
-	
-//	public int getTotalSemester() {
-//		return this.value;
-//	}
-	//getter & setter
-	
+	} 	
 }
