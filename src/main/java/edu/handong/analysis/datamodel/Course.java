@@ -9,8 +9,8 @@ public class Course {
     private String courseCode;
     private String courseName;
     private String courseCredit;
-    private int yearTaken;
-    private int semesterCourseTaken; 
+    private String yearTaken;
+    private String semesterCourseTaken; 
 	
 	public Course(String line) { 
 		this.studentId = line.split(",")[0].trim();
@@ -20,27 +20,22 @@ public class Course {
 		this.courseCode = line.split(",")[4].trim();
 		this.courseName = line.split(",")[5].trim();
 		this.courseCredit = line.split(",")[6].trim();
-		this.yearTaken = Integer.parseInt((line.split(",")[7]).trim());
-		this.semesterCourseTaken = Integer.parseInt((line.split(",")[8]).trim());
-		//constructor 
+		this.yearTaken = line.split(",")[7].trim();
+		this.semesterCourseTaken = line.split(",")[8].trim(); 
 	}
 	
-	public String getYearSemester() {
-		String yearSemester = Integer.toString(yearTaken)+"-"+Integer.toString(semesterCourseTaken);
+	public String getYearSemester() { 
+		String yearSemester = yearTaken+"-"+semesterCourseTaken;
+		
 		return yearSemester;
 	}
 	
-	public int getYearTaken() {
-		return this.yearTaken;
+	public int getYearTaken() { 
+		return Integer.parseInt(this.yearTaken);
 	}
 	
-	public int getSemesterCourseTaken() {
-		return this.semesterCourseTaken;
+	public int getSemesterCourseTaken() { 
+		return Integer.parseInt(this.semesterCourseTaken);
 	}
-	 
-//	public String getCourseName() {
-//		return courseName;
-//	}
-	
-	//getter and setter
+	  
 } 
